@@ -41,6 +41,7 @@ public class Playlist implements Serializable {
 	private Date created;
 	private Date changed;
 	private Integer duration;
+	private int closeness;
 
 	public Playlist() {
 
@@ -60,6 +61,14 @@ public class Playlist implements Serializable {
 		setChanged(changed);
 		this.duration = duration;
     }
+
+	public int getCloseness() {
+		return closeness;
+	}
+
+	public void setCloseness(int closeness) {
+		this.closeness = closeness;
+	}
 
     public String getId() {
         return id;

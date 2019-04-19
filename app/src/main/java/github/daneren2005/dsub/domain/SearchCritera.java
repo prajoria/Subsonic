@@ -31,13 +31,16 @@ public class SearchCritera {
 	private final int artistCount;
 	private final int albumCount;
 	private final int songCount;
+	private final int playlistCount;
+
 	private Pattern pattern;
 
-	public SearchCritera(String query, int artistCount, int albumCount, int songCount) {
+	public SearchCritera(String query, int artistCount, int albumCount, int songCount, int playlistCount) {
 		this.query = query;
 		this.artistCount = artistCount;
 		this.albumCount = albumCount;
 		this.songCount = songCount;
+		this.playlistCount = playlistCount;
 	}
 
 	public String getQuery() {
@@ -54,6 +57,10 @@ public class SearchCritera {
 
 	public int getSongCount() {
 		return songCount;
+	}
+
+	public int getPlaylistCount() {
+		return playlistCount;
 	}
 
 	/**

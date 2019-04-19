@@ -66,6 +66,7 @@ import github.daneren2005.dsub.service.parser.PodcastEntryParser;
 import github.daneren2005.dsub.service.parser.RandomSongsParser;
 import github.daneren2005.dsub.service.parser.ScanStatusParser;
 import github.daneren2005.dsub.service.parser.SearchResult2Parser;
+import github.daneren2005.dsub.service.parser.SearchResult4Parser;
 import github.daneren2005.dsub.service.parser.SearchResultParser;
 import github.daneren2005.dsub.service.parser.ShareParser;
 import github.daneren2005.dsub.service.parser.StarredListParser;
@@ -239,7 +240,7 @@ public class RESTMusicService implements MusicService {
 		String cacheLocn = prefs.getString(Constants.PREFERENCES_KEY_CACHE_LOCATION, null);
 		if(cacheLocn != null && id.indexOf(cacheLocn) != -1) {
 			String search = Util.parseOfflineIDSearch(context, id, cacheLocn);
-			SearchCritera critera = new SearchCritera(search, 1, 1, 0);
+			SearchCritera critera = new SearchCritera(search, 1, 1, 0, 0);
 			SearchResult result = searchNew(critera, context, progressListener);
 			if(result.getArtists().size() == 1) {
 				id = result.getArtists().get(0).getId();
@@ -302,12 +303,13 @@ public class RESTMusicService implements MusicService {
 	@Override
     public SearchResult search(SearchCritera critera, Context context, ProgressListener progressListener) throws Exception {
         try {
-            return searchNew(critera, context, progressListener);
+            return searchNewWithPlaylist(critera, context, progressListener);
         } catch (ServerTooOldException x) {
             // Ensure backward compatibility with REST 1.3.
             return searchOld(critera, context, progressListener);
         }
     }
+
 
     /**
      * Search using the "search" REST method.
@@ -323,7 +325,36 @@ public class RESTMusicService implements MusicService {
         }
     }
 
-    /**
+	private SearchResult searchNewWithPlaylist(SearchCritera critera, Context context, ProgressListener progressListener) throws Exception {
+		checkServerVersion(context, "1.4", null);
+
+		List<String> parameterNames = Arrays.asList("query", "artistCount", "albumCount", "songCount", "playlistCount");
+		List<Object> parameterValues = Arrays.<Object>asList(critera.getQuery(), critera.getArtistCount(), critera.getAlbumCount(), critera.getSongCount(), critera.getPlaylistCount());
+
+		int instance = getInstance(context);
+		String method;
+		if(ServerInfo.isMadsonic(context, instance) && ServerInfo.checkServerVersion(context, "2.0", instance)) {
+			if(Util.isTagBrowsing(context, instance)) {
+				method = "searchID3";
+			} else {
+				method = "search";
+			}
+		} else {
+			if(Util.isTagBrowsing(context, instance)) {
+				method = "search3";
+			} else {
+				method = "search4";
+			}
+		}
+		Reader reader = getReader(context, progressListener, method, parameterNames, parameterValues);
+		try {
+			return new SearchResult4Parser(context, getInstance(context)).parse(reader, progressListener);
+		} finally {
+			Util.close(reader);
+		}
+	}
+
+	/**
      * Search using the "search2" REST method, available in 1.4.0 and later.
      */
     private SearchResult searchNew(SearchCritera critera, Context context, ProgressListener progressListener) throws Exception {
@@ -1616,7 +1647,7 @@ public class RESTMusicService implements MusicService {
 					scrobble(id, true, time, context, progressListener);
 				} else {
 					String search = offline.getString(Constants.OFFLINE_SCROBBLE_SEARCH + i, "");
-					SearchCritera critera = new SearchCritera(search, 0, 0, 1);
+					SearchCritera critera = new SearchCritera(search, 0, 0, 1, 0);
 					SearchResult result = searchNew(critera, context, progressListener);
 					if(result.getSongs().size() == 1){
 						Log.i(TAG, "Query '" + search + "' returned song " + result.getSongs().get(0).getTitle() + " by " + result.getSongs().get(0).getArtist() + " with id " + result.getSongs().get(0).getId());
@@ -1653,7 +1684,7 @@ public class RESTMusicService implements MusicService {
 			} else {
 				String search = offline.getString(Constants.OFFLINE_STAR_SEARCH + i, "");
 				try{
-					SearchCritera critera = new SearchCritera(search, 0, 1, 1);
+					SearchCritera critera = new SearchCritera(search, 0, 1, 1, 1);
 					SearchResult result = searchNew(critera, context, progressListener);
 					if(result.getSongs().size() == 1) {
 						MusicDirectory.Entry song = result.getSongs().get(0);
@@ -1694,7 +1725,7 @@ public class RESTMusicService implements MusicService {
 				id = cachedSongId.getSecond();
 			} else {
 				String searchCriteria = Util.parseOfflineIDSearch(context, id, cacheLocn);
-				SearchCritera critera = new SearchCritera(searchCriteria, 0, 0, 1);
+				SearchCritera critera = new SearchCritera(searchCriteria, 0, 0, 1, 0);
 				SearchResult result = searchNew(critera, context, progressListener);
 				if (result.getSongs().size() == 1) {
 					id = result.getSongs().get(0).getId();

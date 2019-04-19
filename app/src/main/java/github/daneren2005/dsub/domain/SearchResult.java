@@ -31,11 +31,14 @@ public class SearchResult implements Serializable {
     private final List<Artist> artists;
     private final List<MusicDirectory.Entry> albums;
     private final List<MusicDirectory.Entry> songs;
+    private final List<Playlist> playlists;
 
-    public SearchResult(List<Artist> artists, List<MusicDirectory.Entry> albums, List<MusicDirectory.Entry> songs) {
+
+    public SearchResult(List<Artist> artists, List<MusicDirectory.Entry> albums, List<MusicDirectory.Entry> songs, List<Playlist> playlists) {
         this.artists = artists;
         this.albums = albums;
         this.songs = songs;
+        this.playlists = playlists;
     }
 
     public List<Artist> getArtists() {
@@ -50,7 +53,11 @@ public class SearchResult implements Serializable {
         return songs;
     }
 
-	public boolean hasArtists() {
+    public List<Playlist> getPlaylists() {
+        return playlists;
+    }
+
+    public boolean hasArtists() {
 		return !artists.isEmpty();
 	}
 	public boolean hasAlbums() {
@@ -59,4 +66,8 @@ public class SearchResult implements Serializable {
 	public boolean hasSongs() {
 		return !songs.isEmpty();
 	}
+    public boolean hasPlaylists() {
+        return !playlists.isEmpty();
+    }
+
 }

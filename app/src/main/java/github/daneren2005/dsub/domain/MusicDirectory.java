@@ -239,6 +239,8 @@ public class MusicDirectory implements Serializable {
 		private String albumId;
 		private String artistId;
 		private boolean directory;
+
+		private boolean playlist;
 		private String title;
 		private String album;
 		private String artist;
@@ -267,6 +269,7 @@ public class MusicDirectory implements Serializable {
 		public Entry() {
 
 		}
+
 		public Entry(String id) {
 			this.id = id;
 		}
@@ -274,11 +277,20 @@ public class MusicDirectory implements Serializable {
 			this.id = artist.getId();
 			this.title = artist.getName();
 			this.directory = true;
+			this.playlist = false;
 			this.starred = artist.isStarred();
 			this.rating = artist.getRating();
 			this.linkedArtist = artist;
 		}
-		
+
+		public boolean isPlaylist() {
+			return playlist;
+		}
+
+		public void setPlaylist(boolean playlist) {
+			this.playlist = playlist;
+		}
+
 		@TargetApi(Build.VERSION_CODES.GINGERBREAD_MR1)
 		public void loadMetadata(File file) {
 			try {

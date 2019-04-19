@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import github.daneren2005.dsub.R;
+import github.daneren2005.dsub.domain.MusicDirectory;
 import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.util.ImageLoader;
 import github.daneren2005.dsub.util.SyncUtil;
@@ -56,7 +57,7 @@ public class PlaylistView extends UpdateView<Playlist> {
 	}
 
 	public void onUpdateImageView() {
-		imageTask = imageLoader.loadImage(coverArtView, item, false, true);
+		imageTask = imageLoader.loadImage(coverArtView, item, false, 	true);
 	}
 
 	@Override

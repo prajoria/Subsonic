@@ -19,24 +19,25 @@
 package github.daneren2005.dsub.service.parser;
 
 import android.content.Context;
-import github.daneren2005.dsub.R;
-import github.daneren2005.dsub.domain.MusicDirectory;
-import github.daneren2005.dsub.domain.Playlist;
-import github.daneren2005.dsub.domain.SearchResult;
-import github.daneren2005.dsub.domain.Artist;
-import github.daneren2005.dsub.util.ProgressListener;
+
 import org.xmlpull.v1.XmlPullParser;
 
 import java.io.Reader;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import github.daneren2005.dsub.domain.Artist;
+import github.daneren2005.dsub.domain.MusicDirectory;
+import github.daneren2005.dsub.domain.Playlist;
+import github.daneren2005.dsub.domain.SearchResult;
+import github.daneren2005.dsub.util.ProgressListener;
 
 /**
  * @author Sindre Mehus
  */
-public class SearchResult2Parser extends MusicDirectoryEntryParser {
+public class SearchResult4Parser extends MusicDirectoryEntryParser {
 
-    public SearchResult2Parser(Context context, int instance) {
+    public SearchResult4Parser(Context context, int instance) {
 		super(context, instance);
 	}
 
@@ -46,6 +47,7 @@ public class SearchResult2Parser extends MusicDirectoryEntryParser {
         List<Artist> artists = new ArrayList<Artist>();
         List<MusicDirectory.Entry> albums = new ArrayList<MusicDirectory.Entry>();
         List<MusicDirectory.Entry> songs = new ArrayList<MusicDirectory.Entry>();
+        List<Playlist> playlists = new ArrayList<Playlist>();
 
         int eventType;
         do {
@@ -61,6 +63,17 @@ public class SearchResult2Parser extends MusicDirectoryEntryParser {
 					MusicDirectory.Entry entry = parseEntry("");
 					entry.setDirectory(true);
                     albums.add(entry);
+                } else if ("playlist".equals(name)) {
+                    String id = get("id");
+                    String pls_name = get("name");
+                    String owner = get("owner");
+                    String comment = get("comment");
+                    String songCount = get("songCount");
+                    String pub = get("public");
+                    String created = get("created");
+                    String changed = get("changed");
+                    Integer duration = getInteger("duration");
+                    playlists.add(new Playlist(id, pls_name, owner, comment, songCount, pub, created, changed, duration));
                 } else if ("song".equals(name)) {
                     songs.add(parseEntry(""));
                 } else if ("error".equals(name)) {
@@ -71,7 +84,7 @@ public class SearchResult2Parser extends MusicDirectoryEntryParser {
 
         validate();
 
-        return new SearchResult(artists, albums, songs, null);
+        return new SearchResult(artists, albums, songs, playlists);
     }
 
 }

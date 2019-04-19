@@ -35,6 +35,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.fourthline.cling.support.avtransport.callback.Play;
+
 import github.daneren2005.dsub.domain.Artist;
 import github.daneren2005.dsub.domain.ArtistInfo;
 import github.daneren2005.dsub.domain.ChatMessage;
@@ -249,6 +251,7 @@ public class OfflineMusicService implements MusicService {
     public SearchResult search(SearchCritera criteria, Context context, ProgressListener progressListener) throws Exception {
 		List<Artist> artists = new ArrayList<Artist>();
 		List<Entry> albums = new ArrayList<Entry>();
+		List<Playlist> playlists = new ArrayList<Playlist>();
 		List<Entry> songs = new ArrayList<Entry>();
         File root = FileUtil.getMusicDirectory(context);
 		int closeness = 0;
@@ -264,7 +267,7 @@ public class OfflineMusicService implements MusicService {
 					artists.add(artist);
 				}
 				
-				recursiveAlbumSearch(artistName, artistFile, criteria, context, albums, songs);
+				recursiveAlbumSearch(artistName, artistFile, criteria, context, albums, songs, playlists);
             }
         }
 		
@@ -312,11 +315,14 @@ public class OfflineMusicService implements MusicService {
 		int artistCount = Math.min(artists.size(), criteria.getArtistCount());
 		int albumCount = Math.min(albums.size(), criteria.getAlbumCount());
 		int songCount = Math.min(songs.size(), criteria.getSongCount());
+		int playlistCount = Math.min(playlists.size(), criteria.getPlaylistCount());
+
 		artists = artists.subList(0, artistCount);
 		albums = albums.subList(0, albumCount);
 		songs = songs.subList(0, songCount);
+		playlists = playlists.subList(0, playlistCount);
 
-		return new SearchResult(artists, albums, songs);
+		return new SearchResult(artists, albums, songs, playlists);
     }
 
 	@Override
@@ -324,7 +330,7 @@ public class OfflineMusicService implements MusicService {
 		throw new OfflineException(ERRORMSG);
 	}
 
-	private void recursiveAlbumSearch(String artistName, File file, SearchCritera criteria, Context context, List<Entry> albums, List<Entry> songs) {
+	private void recursiveAlbumSearch(String artistName, File file, SearchCritera criteria, Context context, List<Entry> albums, List<Entry> songs, List<Playlist> playlists) {
 		int closeness;
 		for(File albumFile : FileUtil.listMediaFiles(file)) {
 			if(albumFile.isDirectory()) {
@@ -343,7 +349,7 @@ public class OfflineMusicService implements MusicService {
 					}
 
 					if(songFile.isDirectory()) {
-						recursiveAlbumSearch(artistName, songFile, criteria, context, albums, songs);
+						recursiveAlbumSearch(artistName, songFile, criteria, context, albums, songs, playlists);
 					}
 					else if((closeness = matchCriteria(criteria, songName)) > 0){
 						Entry song = createEntry(context, albumFile, songName);
@@ -475,6 +481,8 @@ public class OfflineMusicService implements MusicService {
 			}
 			
 			File playlistFile = FileUtil.getPlaylistFile(context, id, name);
+			File offlinePlaylistFile = FileUtil.getOfflinePlaylistFile(context, id, name);
+
 			reader = new FileReader(playlistFile);
 			buffer = new BufferedReader(reader);
 			

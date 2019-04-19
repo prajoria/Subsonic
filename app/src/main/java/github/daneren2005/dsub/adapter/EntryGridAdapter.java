@@ -30,6 +30,7 @@ import github.daneren2005.dsub.domain.MusicDirectory.Entry;
 import github.daneren2005.dsub.util.ImageLoader;
 import github.daneren2005.dsub.util.Util;
 import github.daneren2005.dsub.view.AlbumView;
+import github.daneren2005.dsub.view.PlaylistView;
 import github.daneren2005.dsub.view.SongView;
 import github.daneren2005.dsub.view.UpdateView;
 import github.daneren2005.dsub.view.UpdateView.UpdateViewHolder;
@@ -40,11 +41,16 @@ public class EntryGridAdapter extends SectionAdapter<Entry> {
 	public static int VIEW_TYPE_ALBUM_CELL = 1;
 	public static int VIEW_TYPE_ALBUM_LINE = 2;
 	public static int VIEW_TYPE_SONG = 3;
+	public static int VIEW_TYPE_PLAYLIST_CELL = 4;
+	public static int VIEW_TYPE_PLAYLIST_LINE = 5;
+
 
 	private ImageLoader imageLoader;
 	private boolean largeAlbums;
 	private boolean showArtist = false;
 	private boolean showAlbum = false;
+	private boolean showPlaylist = false;
+
 	private boolean removeFromPlaylist = false;
 	private View header;
 
@@ -72,6 +78,10 @@ public class EntryGridAdapter extends SectionAdapter<Entry> {
 		UpdateView updateView = null;
 		if(viewType == VIEW_TYPE_ALBUM_LINE || viewType == VIEW_TYPE_ALBUM_CELL) {
 			updateView = new AlbumView(context, viewType == VIEW_TYPE_ALBUM_CELL);
+		} else if (viewType == VIEW_TYPE_PLAYLIST_CELL || viewType == VIEW_TYPE_PLAYLIST_LINE) {
+			PlaylistView playlistView = new PlaylistView(context, null,viewType == VIEW_TYPE_PLAYLIST_CELL);
+			//playlistView.setShowArtist(showArtist);
+			//playlistView.setObject(entry);
 		} else if(viewType == VIEW_TYPE_SONG) {
 			updateView = new SongView(context);
 		}
@@ -86,7 +96,11 @@ public class EntryGridAdapter extends SectionAdapter<Entry> {
 			AlbumView albumView = (AlbumView) view;
 			albumView.setShowArtist(showArtist);
 			albumView.setObject(entry, imageLoader);
-		} else if(viewType == VIEW_TYPE_SONG) {
+		} else if (viewType == VIEW_TYPE_PLAYLIST_CELL || viewType == VIEW_TYPE_PLAYLIST_LINE) {
+			PlaylistView playlistView = (PlaylistView) view;
+			//playlistView.setShowArtist(showArtist);
+			//playlistView.setObject(entry);
+		}else if(viewType == VIEW_TYPE_SONG) {
 			SongView songView = (SongView) view;
 			songView.setShowAlbum(showAlbum);
 			songView.setObject(entry, checkable && !entry.isVideo());
@@ -108,7 +122,9 @@ public class EntryGridAdapter extends SectionAdapter<Entry> {
 			} else {
 				return VIEW_TYPE_ALBUM_LINE;
 			}
-		} else {
+		} else if (entry.isPlaylist()) {
+			return VIEW_TYPE_PLAYLIST_CELL;
+		}else {
 			return VIEW_TYPE_SONG;
 		}
 	}

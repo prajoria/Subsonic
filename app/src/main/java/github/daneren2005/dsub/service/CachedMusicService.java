@@ -365,6 +365,9 @@ public class CachedMusicService implements MusicService {
 							DownloadFile file = new DownloadFile(context, entry, true);
 							file.unpin();
 						}
+						// Write to Offlien synced folder
+						File offlinePlaylistFile = FileUtil.getOfflinePlaylistFile(context, Util.getServerName(context, musicService.getInstance(context)), dir.getName());
+						FileUtil.writePlaylistFile(context, offlinePlaylistFile, dir);
 						break;
 					}
 				}

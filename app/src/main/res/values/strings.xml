@@ -133,7 +133,8 @@
     <string name="search.no_match">No matches, please try again</string>
     <string name="search.artists">Artists</string>
     <string name="search.albums">Albums</string>
-    <string name="search.songs">Songs</string>
+	<string name="search.playlists">Playlists</string>
+	<string name="search.songs">Songs</string>
 
 	<string name="progress.wait">Please wait...</string>
 	<string name="progress.artist_info">Loading Artist Bio</string>

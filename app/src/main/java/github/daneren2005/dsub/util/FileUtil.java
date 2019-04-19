@@ -154,6 +154,12 @@ public class FileUtil {
 		File playlistDir = getPlaylistDirectory(context, server);
 		return new File(playlistDir, fileSystemSafe(name) + ".m3u");
 	}
+
+	public static File getOfflinePlaylistFile(Context context, String server, String name) {
+		File playlistDir = getOfflinePlaylistDirectory(context, server);
+		return new File(playlistDir, fileSystemSafe(name) + ".m3u");
+	}
+
 	public static void writePlaylistFile(Context context, File file, MusicDirectory playlist) throws IOException {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
@@ -175,6 +181,29 @@ public class FileUtil {
 			fw.close();
 		}
 	}
+
+	public static void writeOfflinePlaylistFile(Context context, File file, MusicDirectory playlist) throws IOException {
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		try {
+			fw.write("#EXTM3U\n");
+			for (MusicDirectory.Entry e : playlist.getChildren()) {
+				String filePath = FileUtil.getSongFile(context, e).getAbsolutePath();
+				if(! new File(filePath).exists()){
+					String ext = FileUtil.getExtension(filePath);
+					String base = FileUtil.getBaseName(filePath);
+					filePath = base + ".complete." + ext;
+				}
+				fw.write(filePath + "\n");
+			}
+		} catch(Exception e) {
+			Log.w(TAG, "Failed to save playlist: " + playlist.getName());
+		} finally {
+			bw.close();
+			fw.close();
+		}
+	}
+
 	public static File getPlaylistDirectory(Context context) {
 		File playlistDir = new File(getSubsonicDirectory(context), "playlists");
 		ensureDirectoryExistsAndIsReadWritable(playlistDir);
@@ -182,6 +211,11 @@ public class FileUtil {
 	}
 	public static File getPlaylistDirectory(Context context, String server) {
 		File playlistDir = new File(getPlaylistDirectory(context), server);
+		ensureDirectoryExistsAndIsReadWritable(playlistDir);
+		return playlistDir;
+	}
+	public static File getOfflinePlaylistDirectory(Context context, String server) {
+		File playlistDir = new File(getPlaylistDirectory(context), "Offline/" + server);
 		ensureDirectoryExistsAndIsReadWritable(playlistDir);
 		return playlistDir;
 	}

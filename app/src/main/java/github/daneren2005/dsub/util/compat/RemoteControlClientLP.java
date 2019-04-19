@@ -320,7 +320,9 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 					playFromParent(new Entry(results.getArtists().get(0)), true);
 				} else if(results.hasAlbums()) {
 					playFromParent(results.getAlbums().get(0), false);
-				} else if(results.hasSongs()) {
+				} else if(results.hasPlaylists()) {
+					playPlaylist(results.getPlaylists().get(0), false, false);
+				}else if(results.hasSongs()) {
 					playSong(results.getSongs().get(0));
 				} else {
 					noResults();
@@ -552,6 +554,7 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 					int artists = 10;
 					int albums = 10;
 					int songs = 10;
+					int playlist = 10;
 
 					// Play a specific artist
 					if (MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE.equals(mediaFocus)) {
@@ -572,7 +575,7 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 						albums = 0;
 					}
 
-					SearchCritera criteria = new SearchCritera(query, artists, albums, songs);
+					SearchCritera criteria = new SearchCritera(query, artists, albums, songs, playlist);
 					searchCriteria(criteria);
 				}
 			}

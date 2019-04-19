@@ -30,6 +30,7 @@ import github.daneren2005.dsub.adapter.SectionAdapter;
 import github.daneren2005.dsub.domain.Artist;
 import github.daneren2005.dsub.domain.MusicDirectory;
 import github.daneren2005.dsub.domain.MusicDirectory.Entry;
+import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.domain.SearchCritera;
 import github.daneren2005.dsub.domain.SearchResult;
 import github.daneren2005.dsub.service.MusicService;
@@ -46,6 +47,8 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 
 	private static final int MAX_ARTISTS = 20;
 	private static final int MAX_ALBUMS = 20;
+	private static final int MAX_PLAYLIST = 50;
+
 	private static final int MAX_SONGS = 50;
 	private static final int MIN_CLOSENESS = 1;
 
@@ -165,6 +168,8 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 			} else {
 				onSongSelected(entry, false, true, true, false);
 			}
+		}else if (item instanceof Playlist){
+			onPlaylistSelected((Playlist)item, false);
 		}
 	}
 
@@ -196,7 +201,7 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 		BackgroundTask<SearchResult> task = new TabBackgroundTask<SearchResult>(this) {
 			@Override
 			protected SearchResult doInBackground() throws Throwable {
-				SearchCritera criteria = new SearchCritera(query, MAX_ARTISTS, MAX_ALBUMS, MAX_SONGS);
+				SearchCritera criteria = new SearchCritera(query, MAX_ARTISTS, MAX_ALBUMS, MAX_SONGS, MAX_PLAYLIST);
 				MusicService service = MusicServiceFactory.getMusicService(context);
 				return service.search(criteria, context, this);
 			}
@@ -241,6 +246,19 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 		Bundle args = new Bundle();
 		args.putString(Constants.INTENT_EXTRA_NAME_ID, album.getId());
 		args.putString(Constants.INTENT_EXTRA_NAME_NAME, album.getTitle());
+		if(autoplay) {
+			args.putBoolean(Constants.INTENT_EXTRA_NAME_AUTOPLAY, true);
+		}
+		fragment.setArguments(args);
+
+		replaceFragment(fragment);
+	}
+
+	private void onPlaylistSelected(Playlist playlist, boolean autoplay) {
+		SubsonicFragment fragment = new SelectPlaylistFragment();
+		Bundle args = new Bundle();
+		args.putString(Constants.INTENT_EXTRA_NAME_ID, playlist.getId());
+		args.putString(Constants.INTENT_EXTRA_NAME_NAME, playlist.getName());
 		if(autoplay) {
 			args.putBoolean(Constants.INTENT_EXTRA_NAME_AUTOPLAY, true);
 		}

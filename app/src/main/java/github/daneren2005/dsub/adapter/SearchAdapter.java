@@ -29,6 +29,7 @@ import java.util.List;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.domain.MusicDirectory.Entry;
+import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.domain.SearchResult;
 import github.daneren2005.dsub.util.DrawableTint;
 import github.daneren2005.dsub.util.ImageLoader;
@@ -36,12 +37,15 @@ import github.daneren2005.dsub.util.Util;
 import github.daneren2005.dsub.view.AlbumView;
 import github.daneren2005.dsub.view.ArtistView;
 import github.daneren2005.dsub.view.BasicHeaderView;
+import github.daneren2005.dsub.view.PlaylistView;
 import github.daneren2005.dsub.view.SongView;
 import github.daneren2005.dsub.view.UpdateView;
 
 import static github.daneren2005.dsub.adapter.ArtistAdapter.VIEW_TYPE_ARTIST;
 import static github.daneren2005.dsub.adapter.EntryGridAdapter.VIEW_TYPE_ALBUM_CELL;
 import static github.daneren2005.dsub.adapter.EntryGridAdapter.VIEW_TYPE_ALBUM_LINE;
+import static github.daneren2005.dsub.adapter.EntryGridAdapter.VIEW_TYPE_PLAYLIST_CELL;
+import static github.daneren2005.dsub.adapter.EntryGridAdapter.VIEW_TYPE_PLAYLIST_LINE;
 import static github.daneren2005.dsub.adapter.EntryGridAdapter.VIEW_TYPE_SONG;
 
 public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
@@ -50,6 +54,7 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 
 	private static final int MAX_ARTISTS = 10;
 	private static final int MAX_ALBUMS = 4;
+	private static final int MAX_PLAYLISTS = 10;
 	private static final int MAX_SONGS = 10;
 
 	public SearchAdapter(Context context, SearchResult searchResult, ImageLoader imageLoader, boolean largeAlbums, OnItemClickedListener listener) {
@@ -70,6 +75,11 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 			headers.add(res.getString(R.string.search_albums));
 			defaultVisible.add(MAX_ALBUMS);
 		}
+		if(!searchResult.getPlaylists().isEmpty()) {
+			sections.add((List<Serializable>) (List<?>) searchResult.getPlaylists());
+			headers.add(res.getString(R.string.search_playlists));
+			defaultVisible.add(MAX_PLAYLISTS);
+		}
 		if(!searchResult.getSongs().isEmpty()) {
 			sections.add((List<Serializable>) (List<?>) searchResult.getSongs());
 			headers.add(res.getString(R.string.search_songs));
@@ -86,7 +96,9 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 		UpdateView updateView = null;
 		if(viewType == VIEW_TYPE_ALBUM_CELL || viewType == VIEW_TYPE_ALBUM_LINE) {
 			updateView = new AlbumView(context, viewType == VIEW_TYPE_ALBUM_CELL);
-		} else if(viewType == VIEW_TYPE_SONG) {
+		} else if(viewType == VIEW_TYPE_PLAYLIST_CELL || viewType == VIEW_TYPE_PLAYLIST_LINE) {
+			updateView = new PlaylistView(context, imageLoader, viewType == VIEW_TYPE_PLAYLIST_CELL );
+		}else if(viewType == VIEW_TYPE_SONG) {
 			updateView = new SongView(context);
 		} else if(viewType == VIEW_TYPE_ARTIST) {
 			updateView = new ArtistView(context);
@@ -101,6 +113,10 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 		if(viewType == VIEW_TYPE_ALBUM_CELL || viewType == VIEW_TYPE_ALBUM_LINE) {
 			AlbumView albumView = (AlbumView) view;
 			albumView.setObject((Entry) item, imageLoader);
+		} else if(viewType == VIEW_TYPE_PLAYLIST_CELL || viewType == VIEW_TYPE_PLAYLIST_LINE) {
+			PlaylistView playlistView = (PlaylistView)view;
+
+			view.setObject((Playlist) item);
 		} else if(viewType == VIEW_TYPE_SONG) {
 			SongView songView = (SongView) view;
 			songView.setObject((Entry) item, true);
@@ -111,7 +127,7 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 
 	@Override
 	public int getItemViewType(Serializable item) {
-		if(item instanceof Entry) {
+		if (item instanceof Entry) {
 			Entry entry = (Entry) item;
 			if (entry.isDirectory()) {
 				if (largeAlbums) {
@@ -119,10 +135,16 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 				} else {
 					return VIEW_TYPE_ALBUM_LINE;
 				}
-			} else {
+			}else {
 				return VIEW_TYPE_SONG;
 			}
-		} else {
+		} else if (item instanceof Playlist){
+//			if (largeAlbums) {
+//				return VIEW_TYPE_PLAYLIST_CELL;
+//			} else {
+				return VIEW_TYPE_PLAYLIST_LINE;
+			//}
+		}else {
 			return VIEW_TYPE_ARTIST;
 		}
 	}

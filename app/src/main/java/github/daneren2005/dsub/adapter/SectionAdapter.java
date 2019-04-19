@@ -183,7 +183,8 @@ public abstract class SectionAdapter<T> extends RecyclerView.Adapter<UpdateViewH
 
 		if(sections.size() == 1 && !singleSectionHeader) {
 			T item = sections.get(0).get(position);
-			onBindViewHolder(holder, item, getItemViewType(position));
+			//onBindViewHolder(holder, item, getItemViewType(position));
+			onBindViewHolder(holder, item, getItemViewType(item));
 			postBindView(updateView, item);
 			holder.setItem(item);
 			return;
