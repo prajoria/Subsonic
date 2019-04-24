@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -153,5 +154,10 @@ public class SelectInternetRadioStationFragment extends SelectRecyclerFragment<I
 		details.add(station.getStreamUrl());
 
 		Util.showDetailsDialog(context, R.string.details_title_internet_radio_station, headers, details);
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, InternetRadioStation item) {
+
 	}
 }

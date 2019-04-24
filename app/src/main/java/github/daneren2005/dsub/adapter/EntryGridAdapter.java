@@ -41,8 +41,8 @@ public class EntryGridAdapter extends SectionAdapter<Entry> {
 	public static int VIEW_TYPE_ALBUM_CELL = 1;
 	public static int VIEW_TYPE_ALBUM_LINE = 2;
 	public static int VIEW_TYPE_SONG = 3;
-	public static int VIEW_TYPE_PLAYLIST_CELL = 4;
-	public static int VIEW_TYPE_PLAYLIST_LINE = 5;
+	public static int VIEW_TYPE_PLAYLIST_CELL = 5;
+	public static int VIEW_TYPE_PLAYLIST_LINE = 6;
 
 
 	private ImageLoader imageLoader;
@@ -98,8 +98,8 @@ public class EntryGridAdapter extends SectionAdapter<Entry> {
 			albumView.setObject(entry, imageLoader);
 		} else if (viewType == VIEW_TYPE_PLAYLIST_CELL || viewType == VIEW_TYPE_PLAYLIST_LINE) {
 			PlaylistView playlistView = (PlaylistView) view;
-			//playlistView.setShowArtist(showArtist);
-			//playlistView.setObject(entry);
+//			playlistView.setShowArtist(showArtist);
+//			playlistView.setObject(entry);
 		}else if(viewType == VIEW_TYPE_SONG) {
 			SongView songView = (SongView) view;
 			songView.setShowAlbum(showAlbum);

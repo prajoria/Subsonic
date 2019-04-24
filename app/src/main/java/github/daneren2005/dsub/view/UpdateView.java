@@ -31,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,8 @@ public abstract class UpdateView<T> extends LinearLayout {
 	protected T item;
 	protected RatingBar ratingBar;
 	protected ImageButton starButton;
+	protected Switch downloadButton;
+
 	protected ImageView moreButton;
 	protected View coverArtView;
 	
@@ -62,6 +65,8 @@ public abstract class UpdateView<T> extends LinearLayout {
 	protected boolean shaded = false;
 	protected boolean starred = false;
 	protected boolean isStarred = false;
+	protected boolean downloaded = false;
+	protected boolean isDownloaded = false;
 	protected int isRated = 0;
 	protected int rating = 0;
 	protected SilentBackgroundTask<Void> imageTask = null;
@@ -268,7 +273,20 @@ public abstract class UpdateView<T> extends LinearLayout {
 				}
 			}
 		}
-
+		if(downloadButton != null) {
+			if(isDownloaded) {
+				if(!downloaded) {
+					downloadButton.setVisibility(View.VISIBLE);
+					starred = true;
+					downloadButton.setChecked(starred);
+				}
+			} else {
+				if(starred) {
+					starred = false;
+					downloadButton.setChecked(starred);
+				}
+			}
+		}
 		if(ratingBar != null && isRated != rating) {
 			if(isRated > 0 && rating == 0) {
 				ratingBar.setVisibility(View.VISIBLE);

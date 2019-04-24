@@ -31,17 +31,20 @@ public class PlaylistAdapter extends SectionAdapter<Playlist> implements FastScr
 	private ImageLoader imageLoader;
 	private boolean largeCell;
 
-	public PlaylistAdapter(Context context, List<Playlist> playlists, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener) {
+	public PlaylistAdapter(Context context, List<Playlist> playlists, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener, OnCheckedChangeListener checkedChangeListener) {
 		super(context, playlists);
 		this.imageLoader = imageLoader;
 		this.largeCell = largeCell;
 		this.onItemClickedListener = listener;
+		this.onCheckedChangeListener = checkedChangeListener;
+
 	}
-	public PlaylistAdapter(Context context, List<String> headers, List<List<Playlist>> sections, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener) {
+	public PlaylistAdapter(Context context, List<String> headers, List<List<Playlist>> sections, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener, OnCheckedChangeListener checkedChangeListener) {
 		super(context, headers, sections);
 		this.imageLoader = imageLoader;
 		this.largeCell = largeCell;
 		this.onItemClickedListener = listener;
+		this.onCheckedChangeListener = checkedChangeListener;
 	}
 
 	@Override

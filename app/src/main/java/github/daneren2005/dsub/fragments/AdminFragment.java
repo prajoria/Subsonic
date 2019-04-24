@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -139,5 +140,10 @@ public class AdminFragment extends SelectRecyclerFragment<User> {
 		fragment.setArguments(args);
 
 		replaceFragment(fragment);
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, User item) {
+
 	}
 }

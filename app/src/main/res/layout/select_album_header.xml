@@ -108,6 +108,12 @@
 				android:src="?attr/share"
 				style="@style/BasicButton"
 				android:layout_gravity="center_vertical"/>
+
+			<Switch
+				android:id="@+id/download_switch"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:visibility="visible" />
 		</LinearLayout>
 
 		<github.daneren2005.dsub.view.RecyclingImageView

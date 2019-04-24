@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.SectionAdapter;
@@ -167,5 +168,10 @@ public class SimilarArtistFragment extends SelectRecyclerFragment<Artist> {
 				return true;
 			}
 		}.execute();
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Artist item) {
+
 	}
 }

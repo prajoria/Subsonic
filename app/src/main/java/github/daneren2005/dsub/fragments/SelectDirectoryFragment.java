@@ -24,10 +24,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.AlphabeticalAlbumAdapter;
@@ -1284,8 +1286,30 @@ public class SelectDirectoryFragment extends SubsonicFragment implements Section
 			songCountView.setText(s.toUpperCase());
 			songLengthView.setText(Util.formatDuration(totalDuration));
 		}
+
+		Switch downloadButton = (Switch) header.findViewById(R.id.download_switch);
+		if(downloadButton != null) {
+			downloadButton.setVisibility(View.VISIBLE);
+
+		}
 	}
 	private void setupButtonEvents(View header) {
+		Switch downloadSwitch = (Switch) header.findViewById(R.id.download_switch);
+		downloadSwitch.setChecked(false);
+		downloadSwitch.setVisibility(View.GONE);
+
+		downloadSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+				if(b){
+					compoundButton.setVisibility(View.VISIBLE);
+
+				}else{
+
+				}
+			}
+		});
+
 		ImageView shareButton = (ImageView) header.findViewById(R.id.select_album_share);
 		if(share != null || podcastId != null || !Util.getPreferences(context).getBoolean(Constants.PREFERENCES_KEY_MENU_SHARED, true) || Util.isOffline(context) || !UserUtil.canShare() || artistInfo != null) {
 			shareButton.setVisibility(View.GONE);

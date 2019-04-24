@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import github.daneren2005.dsub.R;
@@ -255,5 +256,10 @@ public class SelectArtistFragment extends SelectRecyclerFragment<Serializable> i
 			Util.setSelectedMusicFolderId(context, musicFolderId);
 			context.invalidate();
 		}
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Serializable item) {
+
 	}
 }

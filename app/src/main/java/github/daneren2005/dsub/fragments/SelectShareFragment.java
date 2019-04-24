@@ -239,4 +239,9 @@ public class SelectShareFragment extends SelectRecyclerFragment<Share> {
 			}
 		});
 	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Share item) {
+
+	}
 }

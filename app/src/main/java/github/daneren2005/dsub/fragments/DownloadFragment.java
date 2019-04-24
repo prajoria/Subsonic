@@ -25,6 +25,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -186,5 +187,10 @@ public class DownloadFragment extends SelectRecyclerFragment<DownloadFile> imple
 
 			currentRevision = downloadService.getDownloadListUpdateRevision();
 		}
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, DownloadFile item) {
+
 	}
 }

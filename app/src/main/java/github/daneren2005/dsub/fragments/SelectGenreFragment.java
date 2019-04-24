@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.SectionAdapter;
@@ -73,5 +74,10 @@ public class SelectGenreFragment extends SelectRecyclerFragment<Genre> {
 	@Override
 	public boolean onContextItemSelected(MenuItem menuItem, UpdateView<Genre> updateView, Genre item) {
 		return false;
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Genre item) {
+
 	}
 }

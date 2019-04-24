@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -109,5 +110,10 @@ public class UserFragment extends SelectRecyclerFragment<User.Setting>{
 	@Override
 	public boolean onContextItemSelected(MenuItem menuItem, UpdateView<User.Setting> updateView, User.Setting item) {
 		return false;
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, User.Setting item) {
+
 	}
 }

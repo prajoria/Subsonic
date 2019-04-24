@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.SectionAdapter;
@@ -148,5 +149,10 @@ public class SelectBookmarkFragment extends SelectRecyclerFragment<MusicDirector
 		}
 
 		Util.showDetailsDialog(context, R.string.bookmark_details_title, headers, details);
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, MusicDirectory.Entry item) {
+
 	}
 }

@@ -18,6 +18,7 @@ package github.daneren2005.dsub.fragments;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import java.util.List;
 
@@ -67,5 +68,10 @@ public class SelectVideoFragment extends SelectRecyclerFragment<MusicDirectory.E
 	@Override
 	public boolean onContextItemSelected(MenuItem menuItem, UpdateView<MusicDirectory.Entry> updateView, MusicDirectory.Entry entry) {
 		return onContextItemSelected(menuItem, entry);
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, MusicDirectory.Entry item) {
+
 	}
 }

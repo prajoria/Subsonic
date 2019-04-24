@@ -45,11 +45,11 @@ import github.daneren2005.dsub.view.UpdateView;
 public class SearchFragment extends SubsonicFragment implements SectionAdapter.OnItemClickedListener<Serializable> {
 	private static final String TAG = SearchFragment.class.getSimpleName();
 
-	private static final int MAX_ARTISTS = 20;
+	private static final int MAX_ARTISTS = 5;
 	private static final int MAX_ALBUMS = 20;
-	private static final int MAX_PLAYLIST = 50;
+	private static final int MAX_PLAYLIST = 1000;
 
-	private static final int MAX_SONGS = 50;
+	private static final int MAX_SONGS = 5;
 	private static final int MIN_CLOSENESS = 1;
 
 	protected RecyclerView recyclerView;

@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import github.daneren2005.dsub.R;
@@ -146,7 +147,7 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 		}
 
 		if(shared.isEmpty()) {
-			return new PlaylistAdapter(context, playlists, getImageLoader(), largeAlbums, this);
+			return new PlaylistAdapter(context, playlists, getImageLoader(), largeAlbums, this, this);
 		} else {
 			Resources res = context.getResources();
 			List<String> headers = Arrays.asList(res.getString(R.string.playlist_mine), res.getString(R.string.playlist_shared));
@@ -155,7 +156,7 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 			sections.add(mine);
 			sections.add(shared);
 
-			return new PlaylistAdapter(context, headers, sections, getImageLoader(), largeAlbums, this);
+			return new PlaylistAdapter(context, headers, sections, getImageLoader(), largeAlbums, this, this);
 		}
 	}
 
@@ -387,5 +388,10 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 
 			}
 		}.execute();
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Playlist item) {
+		syncPlaylist(item);
 	}
 }
