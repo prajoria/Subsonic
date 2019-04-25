@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,6 +25,8 @@ import android.view.View;
 import android.view.MenuItem;
 import android.net.Uri;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.ArtistAdapter;
 import github.daneren2005.dsub.adapter.EntryGridAdapter;
@@ -33,16 +38,19 @@ import github.daneren2005.dsub.domain.MusicDirectory.Entry;
 import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.domain.SearchCritera;
 import github.daneren2005.dsub.domain.SearchResult;
+import github.daneren2005.dsub.service.DownloadFile;
 import github.daneren2005.dsub.service.MusicService;
 import github.daneren2005.dsub.service.MusicServiceFactory;
 import github.daneren2005.dsub.service.DownloadService;
 import github.daneren2005.dsub.util.BackgroundTask;
 import github.daneren2005.dsub.util.Constants;
+import github.daneren2005.dsub.util.LoadingTask;
+import github.daneren2005.dsub.util.SyncUtil;
 import github.daneren2005.dsub.util.TabBackgroundTask;
 import github.daneren2005.dsub.util.Util;
 import github.daneren2005.dsub.view.UpdateView;
 
-public class SearchFragment extends SubsonicFragment implements SectionAdapter.OnItemClickedListener<Serializable> {
+public class SearchFragment extends SubsonicFragment implements SectionAdapter.OnItemClickedListener<Serializable>, SectionAdapter.OnCheckedChangeListener<Serializable> {
 	private static final String TAG = SearchFragment.class.getSimpleName();
 
 	private static final int MAX_ARTISTS = 5;
@@ -97,7 +105,7 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 
 		if(searchResult != null) {
 			skipSearch = true;
-			recyclerView.setAdapter(adapter = new SearchAdapter(context, searchResult, getImageLoader(), largeAlbums, this));
+			recyclerView.setAdapter(adapter = new SearchAdapter(context, searchResult, getImageLoader(), largeAlbums, this, this));
 		}
 
 		return rootView;
@@ -173,6 +181,77 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 		}
 	}
 
+	private void syncPlaylist(Playlist playlist) {
+		SyncUtil.addSyncedPlaylist(context, playlist.getId());
+
+		boolean syncImmediately;
+		if(Util.getPreferences(context).getBoolean(Constants.PREFERENCES_KEY_SYNC_WIFI, true)) {
+			ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+			if(networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+				syncImmediately = true;
+			} else {
+				syncImmediately = false;
+			}
+		} else {
+			syncImmediately = true;
+		}
+
+		if(syncImmediately) {
+			downloadPlaylist(playlist.getId(), playlist.getName(), true, true, false, false, true);
+		}
+	}
+
+	private void stopSyncPlaylist(final Playlist playlist) {
+		SyncUtil.removeSyncedPlaylist(context, playlist.getId());
+
+		new LoadingTask<Void>(context, false) {
+			@Override
+			protected Void doInBackground() throws Throwable {
+				// Unpin all of the songs in playlist
+				MusicService musicService = MusicServiceFactory.getMusicService(context);
+				MusicDirectory root = musicService.getPlaylist(true, playlist.getId(), playlist.getName(), context, this);
+				for(MusicDirectory.Entry entry: root.getChildren()) {
+					DownloadFile file = new DownloadFile(context, entry, false);
+					file.unpin();
+				}
+
+				return null;
+			}
+
+			@Override
+			protected void done(Void result) {
+
+			}
+		}.execute();
+	}
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Serializable item) {
+		if (item instanceof Artist) {
+			onArtistSelected((Artist) item, false);
+		} else if (item instanceof Entry) {
+			Entry entry = (Entry) item;
+			if (entry.isDirectory()) {
+				onAlbumSelected(entry, false);
+			} else if (entry.isVideo()) {
+				onVideoSelected(entry);
+			} else {
+				onSongSelected(entry, false, true, true, false);
+			}
+		}else if (item instanceof Playlist){
+			Playlist playlist = (Playlist)item;
+
+			if(item != null) {
+				if(b) {
+					syncPlaylist(playlist);
+				}else{
+					stopSyncPlaylist(playlist);
+				}
+			}
+
+		}
+	}
 	@Override
 	protected List<Entry> getSelectedEntries() {
 		List<Serializable> selected = adapter.getSelected();
@@ -209,7 +288,7 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 			@Override
 			protected void done(SearchResult result) {
 				searchResult = result;
-				recyclerView.setAdapter(adapter = new SearchAdapter(context, searchResult, getImageLoader(), largeAlbums, SearchFragment.this));
+				recyclerView.setAdapter(adapter = new SearchAdapter(context, searchResult, getImageLoader(), largeAlbums, SearchFragment.this, SearchFragment.this));
 				if (autoplay) {
 					autoplay(query, artist, album, title);
 				}
@@ -369,4 +448,6 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 			onSongSelected(song, false, false, true, false);
 		}
 	}
+
+
 }

@@ -57,7 +57,7 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 	private static final int MAX_PLAYLISTS = 10000;
 	private static final int MAX_SONGS = 100;
 
-	public SearchAdapter(Context context, SearchResult searchResult, ImageLoader imageLoader, boolean largeAlbums, OnItemClickedListener listener) {
+	public SearchAdapter(Context context, SearchResult searchResult, ImageLoader imageLoader, boolean largeAlbums, OnItemClickedListener listener, SectionAdapter.OnCheckedChangeListener onCheckedChangeListener) {
 		this.imageLoader = imageLoader;
 		this.largeAlbums = largeAlbums;
 
@@ -88,6 +88,7 @@ public class SearchAdapter extends ExpandableSectionAdapter<Serializable> {
 		init(context, headers, sections, defaultVisible);
 
 		this.onItemClickedListener = listener;
+		this.onCheckedChangeListener = onCheckedChangeListener;
 		checkable = true;
 	}
 

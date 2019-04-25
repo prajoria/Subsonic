@@ -67,6 +67,11 @@ public class PlaylistView extends UpdateView<Playlist> {
 	protected void setObjectImpl(Playlist playlist) {
 		titleView.setText(playlist.getName());
 		imageTask = imageLoader.loadImage(coverArtView, playlist, false, true);
+		if(SyncUtil.isSyncedPlaylist(context, playlist.getId())){
+			downloadButton.setChecked(true);
+		}else{
+			downloadButton.setChecked(false);
+		}
 	}
 
 	public void onUpdateImageView() {
@@ -82,8 +87,11 @@ public class PlaylistView extends UpdateView<Playlist> {
 
 		pinned = SyncUtil.isSyncedPlaylist(context, item.getId());
 		isDownloaded = SyncUtil.isSyncedPlaylist(context, item.getId());
+
+
 	}
 	public void update() {
+
 		super.update();
 
 //		if(!Util.equals(item.get(), coverArtId)) {

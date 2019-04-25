@@ -21,6 +21,7 @@ import java.util.List;
 import android.view.ViewGroup;
 import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.util.ImageLoader;
+import github.daneren2005.dsub.util.SyncUtil;
 import github.daneren2005.dsub.view.FastScroller;
 import github.daneren2005.dsub.view.PlaylistView;
 import github.daneren2005.dsub.view.UpdateView;
@@ -67,6 +68,7 @@ public class PlaylistAdapter extends SectionAdapter<Playlist> implements FastScr
 	public String getTextToShowInBubble(int position) {
 		Object item = getItemForPosition(position);
 		if(item instanceof Playlist) {
+
 			return getNameIndex(((Playlist) item).getName());
 		} else {
 			return null;

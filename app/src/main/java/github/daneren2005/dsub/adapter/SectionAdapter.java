@@ -40,8 +40,10 @@ import java.util.List;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.activity.SubsonicFragmentActivity;
+import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.util.Constants;
 import github.daneren2005.dsub.util.MenuUtil;
+import github.daneren2005.dsub.util.SyncUtil;
 import github.daneren2005.dsub.util.Util;
 import github.daneren2005.dsub.view.BasicHeaderView;
 import github.daneren2005.dsub.view.UpdateView;
@@ -136,13 +138,16 @@ public abstract class SectionAdapter<T> extends RecyclerView.Adapter<UpdateViewH
 				});
 				View downloadSwitch = updateView.findViewById(R.id.download_switch);
 				if (downloadSwitch != null) {
+
 					((Switch)downloadSwitch).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 						@Override
 						public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
 
 							try {
 								final T item = holder.getItem();
-
+								if(item != null && item instanceof Playlist) {
+									onCheckedChangeListener.onItemCheckedChanged(compoundButton, b, item);
+								}
 							} catch(Exception e) {
 								Log.w(TAG, "Failed to show popup", e);
 							}

@@ -41,6 +41,7 @@ import github.daneren2005.dsub.domain.MusicDirectory;
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.util.DrawableTint;
 import github.daneren2005.dsub.util.SilentBackgroundTask;
+import github.daneren2005.dsub.util.SyncUtil;
 
 public abstract class UpdateView<T> extends LinearLayout {
 	private static final String TAG = UpdateView.class.getSimpleName();
@@ -274,16 +275,17 @@ public abstract class UpdateView<T> extends LinearLayout {
 			}
 		}
 		if(downloadButton != null) {
+			downloadButton.setVisibility(View.VISIBLE);
+
 			if(isDownloaded) {
 				if(!downloaded) {
-					downloadButton.setVisibility(View.VISIBLE);
-					starred = true;
-					downloadButton.setChecked(starred);
+					downloaded = true;
+					downloadButton.setChecked(downloaded);
 				}
 			} else {
 				if(starred) {
-					starred = false;
-					downloadButton.setChecked(starred);
+					downloaded = false;
+					downloadButton.setChecked(downloaded);
 				}
 			}
 		}

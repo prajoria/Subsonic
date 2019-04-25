@@ -392,6 +392,19 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 
 	@Override
 	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Playlist item) {
-		syncPlaylist(item);
+
+
+		if(item != null) {
+			if(b) {
+				syncPlaylist(item);
+			}else{
+				stopSyncPlaylist(item);
+			}
+		}
+		if(SyncUtil.isSyncedPlaylist(context, item.getId())){
+			compoundButton.setChecked(true);
+		}else{
+			compoundButton.setChecked(false);
+		}
 	}
 }
