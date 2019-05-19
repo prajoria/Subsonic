@@ -661,6 +661,11 @@ public class SubsonicFragmentActivity extends SubsonicActivity implements Downlo
 			return new SelectArtistFragment();
 		} else if("Playlist".equals(fragmentType)) {
 			return new SelectPlaylistFragment();
+		}  else if("Favorite Playlist".equals(fragmentType)) {
+			SelectPlaylistFragment fragement =  new SelectPlaylistFragment();
+			fragement.setFavoriteOnly(true);
+			return fragement;
+
 		} else if("Chat".equals(fragmentType)) {
 			return new ChatFragment();
 		} else if("Podcast".equals(fragmentType)) {

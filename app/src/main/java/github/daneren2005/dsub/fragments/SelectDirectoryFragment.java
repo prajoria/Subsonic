@@ -505,7 +505,7 @@ public class SelectDirectoryFragment extends SubsonicFragment implements Section
 		new LoadTask(refresh) {
 			@Override
 			protected MusicDirectory load(MusicService service) throws Exception {
-				return service.getPlaylist(refresh, playlistId, playlistName, context, this);
+				return service.getPlaylist(refresh, playlistId, playlistName, context,false, this);
 			}
 		}.execute();
 	}
@@ -1337,7 +1337,7 @@ public class SelectDirectoryFragment extends SubsonicFragment implements Section
 							protected Void doInBackground() throws Throwable {
 								// Unpin all of the songs in playlist
 								MusicService musicService = MusicServiceFactory.getMusicService(context);
-								MusicDirectory root = musicService.getPlaylist(true, playlistId, playlistName, context, this);
+								MusicDirectory root = musicService.getPlaylist(true, playlistId, playlistName, context, false, this);
 								for(MusicDirectory.Entry entry: root.getChildren()) {
 									DownloadFile file = new DownloadFile(context, entry, false);
 									file.unpin();

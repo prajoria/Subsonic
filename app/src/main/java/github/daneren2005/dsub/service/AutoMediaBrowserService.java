@@ -355,7 +355,7 @@ public class AutoMediaBrowserService extends MediaBrowserServiceCompat {
 		new SilentServiceTask<List<Playlist>>(downloadService) {
 			@Override
 			protected List<Playlist> doInBackground(MusicService musicService) throws Throwable {
-				return musicService.getPlaylists(false, downloadService, null);
+				return musicService.getPlaylists(false, downloadService,  false,null);
 			}
 
 			@Override

@@ -917,7 +917,7 @@ public class SubsonicFragment extends Fragment implements SwipeRefreshLayout.OnR
 					}
 				}
 				else {
-					root = musicService.getPlaylist(true, id, name, context, this);
+					root = musicService.getPlaylist(true, id, name, context, false, this);
 				}
 
 				boolean shuffleByAlbum = Util.getPreferences(context).getBoolean(Constants.PREFERENCES_KEY_SHUFFLE_BY_ALBUM, true);
@@ -1035,7 +1035,7 @@ public class SubsonicFragment extends Fragment implements SwipeRefreshLayout.OnR
 			protected List<Playlist> doInBackground() throws Throwable {
 				MusicService musicService = MusicServiceFactory.getMusicService(context);
 				List<Playlist> playlists = new ArrayList<Playlist>();
-				playlists.addAll(musicService.getPlaylists(false, context, this));
+				playlists.addAll(musicService.getPlaylists(false, context, false, this));
 
 				// Iterate through and remove all non owned public playlists
 				Iterator<Playlist> it = playlists.iterator();
@@ -1223,7 +1223,7 @@ public class SubsonicFragment extends Fragment implements SwipeRefreshLayout.OnR
 			@Override
 			protected Void doInBackground() throws Throwable {
 				MusicService musicService = MusicServiceFactory.getMusicService(context);
-				MusicDirectory playlist = musicService.getPlaylist(true, id, name, context, null);
+				MusicDirectory playlist = musicService.getPlaylist(true, id, name, context, false, null);
 				List<Entry> toDelete = playlist.getChildren();
 				musicService.overwritePlaylist(id, name, toDelete.size(), songs, context, null);
 				return null;

@@ -292,7 +292,7 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 		new SilentServiceTask<Void>(downloadService) {
 			@Override
 			protected Void doInBackground(MusicService musicService) throws Throwable {
-				List<Playlist> playlists = musicService.getPlaylists(false, downloadService, null);
+				List<Playlist> playlists = musicService.getPlaylists(false, downloadService, false, null);
 				for(Playlist playlist: playlists) {
 					if(playlist.getName().equals(name)) {
 						getPlaylist(playlist);
@@ -305,7 +305,7 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 			}
 
 			private void getPlaylist(Playlist playlist) throws Exception {
-				MusicDirectory musicDirectory = musicService.getPlaylist(false, playlist.getId(), playlist.getName(), downloadService, null);
+				MusicDirectory musicDirectory = musicService.getPlaylist(false, playlist.getId(), playlist.getName(), downloadService, false, null);
 				playSongs(musicDirectory.getChildren());
 			}
 		}.execute();
@@ -365,7 +365,7 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 		new SilentServiceTask<Void>(downloadService) {
 			@Override
 			protected Void doInBackground(MusicService musicService) throws Throwable {
-				MusicDirectory musicDirectory = musicService.getPlaylist(false, playlist.getId(), playlist.getName(), downloadService, null);
+				MusicDirectory musicDirectory = musicService.getPlaylist(false, playlist.getId(), playlist.getName(), downloadService, false,null);
 				playSongs(musicDirectory.getChildren(), shuffle, append);
 
 				return null;

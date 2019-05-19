@@ -387,7 +387,7 @@ public class RESTMusicService implements MusicService {
     }
 
     @Override
-    public MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, ProgressListener progressListener) throws Exception {
+    public MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
         Reader reader = getReader(context, progressListener, "getPlaylist", "id", id, SOCKET_READ_TIMEOUT_GET_PLAYLIST);
         try {
 			return new PlaylistParser(context, getInstance(context)).parse(reader, progressListener);
@@ -397,7 +397,7 @@ public class RESTMusicService implements MusicService {
     }
 
     @Override
-    public List<Playlist> getPlaylists(boolean refresh, Context context, ProgressListener progressListener) throws Exception {
+    public List<Playlist> getPlaylists(boolean refresh, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
         Reader reader = getReader(context, progressListener, "getPlaylists");
         try {
             return new PlaylistsParser(context, getInstance(context)).parse(reader, progressListener);

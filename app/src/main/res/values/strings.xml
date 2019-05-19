@@ -33,7 +33,8 @@
     <string name="button_bar.home">Home</string>
     <string name="button_bar.browse">Library</string>
 	<string name="button_bar.playlists">Playlists</string>
-    <string name="button_bar.now_playing">Now Playing</string>
+	<string name="button_bar.fav_playlists">Favorite Playlists</string>
+	<string name="button_bar.now_playing">Now Playing</string>
 	<string name="button_bar.podcasts">Podcasts</string>
 	<string name="button_bar.bookmarks">Bookmarks</string>
 	<string name="button_bar.internet_radio">Internet Radio</string>

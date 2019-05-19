@@ -42,6 +42,7 @@ import java.util.List;
 
 public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 	private static final String TAG = SelectPlaylistFragment.class.getSimpleName();
+	private boolean favoriteOnly = false;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -162,7 +163,7 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 
 	@Override
 	public List<Playlist> getObjects(MusicService musicService, boolean refresh, ProgressListener listener) throws Exception {
-		List<Playlist> playlists = musicService.getPlaylists(refresh, context, listener);
+		List<Playlist> playlists = musicService.getPlaylists(refresh, context, favoriteOnly,listener);
 		if(!Util.isOffline(context) && refresh) {
 			new CacheCleaner(context, getDownloadService()).cleanPlaylists(playlists);
 		}
@@ -374,7 +375,7 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 			protected Void doInBackground() throws Throwable {
 				// Unpin all of the songs in playlist
 				MusicService musicService = MusicServiceFactory.getMusicService(context);
-				MusicDirectory root = musicService.getPlaylist(true, playlist.getId(), playlist.getName(), context, this);
+				MusicDirectory root = musicService.getPlaylist(true, playlist.getId(), playlist.getName(), context, false, this);
 				for(MusicDirectory.Entry entry: root.getChildren()) {
 					DownloadFile file = new DownloadFile(context, entry, false);
 					file.unpin();
@@ -406,5 +407,13 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 		}else{
 			compoundButton.setChecked(false);
 		}
+	}
+
+	public boolean isFavoriteOnly() {
+		return favoriteOnly;
+	}
+
+	public void setFavoriteOnly(boolean favoriteOnly) {
+		this.favoriteOnly = favoriteOnly;
 	}
 }

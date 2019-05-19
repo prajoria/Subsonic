@@ -334,14 +334,14 @@ public class CachedMusicService implements MusicService {
     }
 
     @Override
-    public MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, ProgressListener progressListener) throws Exception {
+    public MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
 		MusicDirectory dir = null;
 		MusicDirectory cachedPlaylist = FileUtil.deserialize(context, getCacheName(context, "playlist", id), MusicDirectory.class);
 		if(!refresh) {
 			dir = cachedPlaylist;
 		}
 		if(dir == null) {
-			dir = musicService.getPlaylist(refresh, id, name, context, progressListener);
+			dir = musicService.getPlaylist(refresh, id, name, context, favOnly, progressListener);
 			updateAllSongs(context, dir);
 			FileUtil.serialize(context, dir, getCacheName(context, "playlist", id));
 
@@ -377,7 +377,7 @@ public class CachedMusicService implements MusicService {
     }
 
     @Override
-    public List<Playlist> getPlaylists(boolean refresh, Context context, ProgressListener progressListener) throws Exception {
+    public List<Playlist> getPlaylists(boolean refresh, Context context, boolean favoriteOnly, ProgressListener progressListener) throws Exception {
         checkSettingsChanged(context);
         List<Playlist> result = refresh ? null : cachedPlaylists.get();
         if (result == null) {
@@ -386,10 +386,22 @@ public class CachedMusicService implements MusicService {
         	}
         	
         	if(result == null) {
-	        	result = musicService.getPlaylists(refresh, context, progressListener);
+	        	result = musicService.getPlaylists(refresh, context, favoriteOnly, progressListener);
 	        	FileUtil.serialize(context, new ArrayList<Playlist>(result), getCacheName(context, "playlist"));
         	}
-            cachedPlaylists.set(result);
+        	if(favoriteOnly) {
+				List<Playlist> favresult = new ArrayList<Playlist>();
+				for (Playlist pls : result) {
+					if (pls.getFavorite()) {
+						favresult.add(pls);
+					}
+				}
+				result = favresult;
+			}
+
+			cachedPlaylists.set(result);
+
+
         }
         return result;
     }
