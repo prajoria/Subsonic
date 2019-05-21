@@ -30,7 +30,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.PopupMenu;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +40,10 @@ import java.util.List;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.activity.SubsonicFragmentActivity;
+import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.util.Constants;
 import github.daneren2005.dsub.util.MenuUtil;
+import github.daneren2005.dsub.util.SyncUtil;
 import github.daneren2005.dsub.util.Util;
 import github.daneren2005.dsub.view.BasicHeaderView;
 import github.daneren2005.dsub.view.UpdateView;
@@ -55,6 +59,9 @@ public abstract class SectionAdapter<T> extends RecyclerView.Adapter<UpdateViewH
 	protected List<List<T>> sections;
 	protected boolean singleSectionHeader;
 	protected OnItemClickedListener<T> onItemClickedListener;
+
+	protected OnCheckedChangeListener<T> onCheckedChangeListener;
+
 	protected List<T> selected = new ArrayList<>();
 	protected List<UpdateView> selectedViews = new ArrayList<>();
 	protected ActionMode currentActionMode;
@@ -129,7 +136,25 @@ public abstract class SectionAdapter<T> extends RecyclerView.Adapter<UpdateViewH
 						}
 					}
 				});
+				View downloadSwitch = updateView.findViewById(R.id.download_switch);
+				if (downloadSwitch != null) {
 
+					((Switch)downloadSwitch).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+						@Override
+						public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+							try {
+								final T item = holder.getItem();
+								if(item != null && item instanceof Playlist) {
+									onCheckedChangeListener.onItemCheckedChanged(compoundButton, b, item);
+								}
+							} catch(Exception e) {
+								Log.w(TAG, "Failed to show popup", e);
+							}
+						}
+					});
+
+				}
 				View moreButton = updateView.findViewById(R.id.item_more);
 				if (moreButton != null) {
 					moreButton.setOnClickListener(new View.OnClickListener() {
@@ -339,6 +364,11 @@ public abstract class SectionAdapter<T> extends RecyclerView.Adapter<UpdateViewH
 		this.onItemClickedListener = onItemClickedListener;
 	}
 
+	public void setOnCheckedChangeListener(OnCheckedChangeListener<T> onCheckedChangeListener) {
+		this.onCheckedChangeListener = onCheckedChangeListener;
+	}
+
+
 	public void addSelected(T item) {
 		selected.add(item);
 	}
@@ -513,5 +543,9 @@ public abstract class SectionAdapter<T> extends RecyclerView.Adapter<UpdateViewH
 		void onItemClicked(UpdateView<T> updateView, T item);
 		void onCreateContextMenu(Menu menu, MenuInflater menuInflater, UpdateView<T> updateView, T item);
 		boolean onContextItemSelected(MenuItem menuItem, UpdateView<T> updateView, T item);
+	}
+
+	public interface OnCheckedChangeListener<T> {
+		void onItemCheckedChanged(CompoundButton compoundButton, boolean b, T item);
 	}
 }

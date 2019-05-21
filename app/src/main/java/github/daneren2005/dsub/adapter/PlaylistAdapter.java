@@ -21,6 +21,7 @@ import java.util.List;
 import android.view.ViewGroup;
 import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.util.ImageLoader;
+import github.daneren2005.dsub.util.SyncUtil;
 import github.daneren2005.dsub.view.FastScroller;
 import github.daneren2005.dsub.view.PlaylistView;
 import github.daneren2005.dsub.view.UpdateView;
@@ -31,17 +32,20 @@ public class PlaylistAdapter extends SectionAdapter<Playlist> implements FastScr
 	private ImageLoader imageLoader;
 	private boolean largeCell;
 
-	public PlaylistAdapter(Context context, List<Playlist> playlists, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener) {
+	public PlaylistAdapter(Context context, List<Playlist> playlists, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener, OnCheckedChangeListener checkedChangeListener) {
 		super(context, playlists);
 		this.imageLoader = imageLoader;
 		this.largeCell = largeCell;
 		this.onItemClickedListener = listener;
+		this.onCheckedChangeListener = checkedChangeListener;
+
 	}
-	public PlaylistAdapter(Context context, List<String> headers, List<List<Playlist>> sections, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener) {
+	public PlaylistAdapter(Context context, List<String> headers, List<List<Playlist>> sections, ImageLoader imageLoader, boolean largeCell, OnItemClickedListener listener, OnCheckedChangeListener checkedChangeListener) {
 		super(context, headers, sections);
 		this.imageLoader = imageLoader;
 		this.largeCell = largeCell;
 		this.onItemClickedListener = listener;
+		this.onCheckedChangeListener = checkedChangeListener;
 	}
 
 	@Override
@@ -64,6 +68,7 @@ public class PlaylistAdapter extends SectionAdapter<Playlist> implements FastScr
 	public String getTextToShowInBubble(int position) {
 		Object item = getItemForPosition(position);
 		if(item instanceof Playlist) {
+
 			return getNameIndex(((Playlist) item).getName());
 		} else {
 			return null;

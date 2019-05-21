@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,5 +85,10 @@ public class SelectYearFragment extends SelectRecyclerFragment<String> {
 	@Override
 	public boolean onContextItemSelected(MenuItem menuItem, UpdateView<String> updateView, String item) {
 		return false;
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, String item) {
+
 	}
 }

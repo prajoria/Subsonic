@@ -62,7 +62,7 @@ public class PlaylistSyncAdapter extends SubsonicSyncAdapter {
 		List<Playlist> remainder = null;
 		try {
 			// Just update playlist listings so user doesn't have to
-			remainder = musicService.getPlaylists(true, context, null);
+			remainder = musicService.getPlaylists(true, context, false,null);
 		} catch(Exception e) {
 			Log.e(TAG, "Failed to refresh playlist list for " + serverName);
 		}
@@ -81,7 +81,7 @@ public class PlaylistSyncAdapter extends SubsonicSyncAdapter {
 			}
 
 			try {
-				MusicDirectory playlist = musicService.getPlaylist(true, id, serverName, context, null);
+				MusicDirectory playlist = musicService.getPlaylist(true, id, serverName, context, false, null);
 
 				// Get list of original paths
 				List<String> origPathList = new ArrayList<String>();
@@ -143,7 +143,7 @@ public class PlaylistSyncAdapter extends SubsonicSyncAdapter {
 				MusicDirectory dir = FileUtil.deserialize(context, Util.getCacheName(context, instance, "playlist", playlist.getId()), MusicDirectory.class, MAX_PLAYLIST_AGE);
 				if (dir == null) {
 					try {
-						musicService.getPlaylist(true, playlist.getId(), serverName, context, null);
+						musicService.getPlaylist(true, playlist.getId(), serverName, context, false, null);
 					} catch(Exception e) {
 						Log.w(TAG, "Failed to update playlist for " + playlist.getName());
 					}

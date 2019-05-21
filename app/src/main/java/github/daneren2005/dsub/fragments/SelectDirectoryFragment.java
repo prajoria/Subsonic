@@ -1,6 +1,9 @@
 package github.daneren2005.dsub.fragments;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,10 +27,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.AlphabeticalAlbumAdapter;
@@ -37,9 +42,11 @@ import github.daneren2005.dsub.adapter.SectionAdapter;
 import github.daneren2005.dsub.adapter.TopRatedAlbumAdapter;
 import github.daneren2005.dsub.domain.ArtistInfo;
 import github.daneren2005.dsub.domain.MusicDirectory;
+import github.daneren2005.dsub.domain.Playlist;
 import github.daneren2005.dsub.domain.ServerInfo;
 import github.daneren2005.dsub.domain.Share;
 import github.daneren2005.dsub.service.CachedMusicService;
+import github.daneren2005.dsub.service.DownloadFile;
 import github.daneren2005.dsub.service.DownloadService;
 import github.daneren2005.dsub.util.DrawableTint;
 import github.daneren2005.dsub.util.ImageLoader;
@@ -57,6 +64,7 @@ import github.daneren2005.dsub.util.Constants;
 import github.daneren2005.dsub.util.LoadingTask;
 import github.daneren2005.dsub.util.Pair;
 import github.daneren2005.dsub.util.SilentBackgroundTask;
+import github.daneren2005.dsub.util.SyncUtil;
 import github.daneren2005.dsub.util.TabBackgroundTask;
 import github.daneren2005.dsub.util.UpdateHelper;
 import github.daneren2005.dsub.util.UserUtil;
@@ -497,7 +505,7 @@ public class SelectDirectoryFragment extends SubsonicFragment implements Section
 		new LoadTask(refresh) {
 			@Override
 			protected MusicDirectory load(MusicService service) throws Exception {
-				return service.getPlaylist(refresh, playlistId, playlistName, context, this);
+				return service.getPlaylist(refresh, playlistId, playlistName, context,false, this);
 			}
 		}.execute();
 	}
@@ -1284,8 +1292,72 @@ public class SelectDirectoryFragment extends SubsonicFragment implements Section
 			songCountView.setText(s.toUpperCase());
 			songLengthView.setText(Util.formatDuration(totalDuration));
 		}
+
+
 	}
+
 	private void setupButtonEvents(View header) {
+		Switch downloadSwitch = (Switch) header.findViewById(R.id.album_download_switch);
+		if(downloadSwitch != null) {
+			downloadSwitch.setChecked(SyncUtil.isSyncedPlaylist(context, playlistId));
+			downloadSwitch.setVisibility(View.VISIBLE);
+
+			downloadSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+				@Override
+				public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
+					compoundButton.setVisibility(View.VISIBLE);
+					if(playlistId != null){
+						if(b) {
+							SyncUtil.addSyncedPlaylist(context, playlistId);
+
+							boolean syncImmediately;
+							if (Util.getPreferences(context).getBoolean(Constants.PREFERENCES_KEY_SYNC_WIFI, true)) {
+								ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+								NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+
+								if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+									syncImmediately = true;
+								} else {
+									syncImmediately = false;
+								}
+							} else {
+								syncImmediately = true;
+							}
+
+							if (syncImmediately) {
+								downloadPlaylist(playlistId, playlistName, true, true, false, false, true);
+							}
+						}
+					}else {
+						SyncUtil.removeSyncedPlaylist(context, playlistId);
+
+						new LoadingTask<Void>(context, false) {
+							@Override
+							protected Void doInBackground() throws Throwable {
+								// Unpin all of the songs in playlist
+								MusicService musicService = MusicServiceFactory.getMusicService(context);
+								MusicDirectory root = musicService.getPlaylist(true, playlistId, playlistName, context, false, this);
+								for(MusicDirectory.Entry entry: root.getChildren()) {
+									DownloadFile file = new DownloadFile(context, entry, false);
+									file.unpin();
+								}
+
+								return null;
+							}
+
+							@Override
+							protected void done(Void result) {
+
+							}
+						}.execute();
+					}
+
+				}
+			});
+		}
+
+
 		ImageView shareButton = (ImageView) header.findViewById(R.id.select_album_share);
 		if(share != null || podcastId != null || !Util.getPreferences(context).getBoolean(Constants.PREFERENCES_KEY_MENU_SHARED, true) || Util.isOffline(context) || !UserUtil.canShare() || artistInfo != null) {
 			shareButton.setVisibility(View.GONE);
@@ -1294,6 +1366,7 @@ public class SelectDirectoryFragment extends SubsonicFragment implements Section
 				@Override
 				public void onClick(View v) {
 					createShare(SelectDirectoryFragment.this.entries);
+
 				}
 			});
 		}

@@ -14,6 +14,10 @@
 			android:icon="?attr/drawerPlaylists"
 			android:title="@string/button_bar.playlists"/>
 		<item
+			android:id="@+id/drawer_fav_playlists"
+			android:icon="?attr/drawerPlaylists"
+			android:title="@string/button_bar.fav_playlists"/>
+		<item
 			android:id="@+id/drawer_podcasts"
 			android:icon="?attr/drawerPodcasts"
 			android:title="@string/button_bar.podcasts"/>

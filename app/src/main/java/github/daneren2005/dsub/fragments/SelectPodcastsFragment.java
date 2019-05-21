@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.SectionAdapter;
@@ -441,5 +442,10 @@ public class SelectPodcastsFragment extends SelectRecyclerFragment<Serializable>
 
 	private void stopSyncPodcast(PodcastChannel podcast) {
 		SyncUtil.removeSyncedPodcast(context, podcast.getId());
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Serializable item) {
+
 	}
 }

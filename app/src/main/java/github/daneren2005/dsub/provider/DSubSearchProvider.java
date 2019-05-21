@@ -77,7 +77,7 @@ public class DSubSearchProvider extends ContentProvider {
 		}
 
 		try {
-			return musicService.search(new SearchCritera(query, 5, 10, 10, 10), getContext(), null);
+			return musicService.search(new SearchCritera(query, 5, 10, 10, 1000), getContext(), null);
 		} catch (Exception e) {
 			return null;
 		}

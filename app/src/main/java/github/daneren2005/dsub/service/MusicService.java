@@ -70,9 +70,9 @@ public interface MusicService {
 
     MusicDirectory getStarredList(Context context, ProgressListener progressListener) throws Exception;
 
-    MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, ProgressListener progressListener) throws Exception;
+    MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, boolean favoriteOnly, ProgressListener progressListener) throws Exception;
 
-    List<Playlist> getPlaylists(boolean refresh, Context context, ProgressListener progressListener) throws Exception;
+    List<Playlist> getPlaylists(boolean refresh, Context context, boolean favoriteOnly, ProgressListener progressListener) throws Exception;
 
     void createPlaylist(String id, String name, List<MusicDirectory.Entry> entries, Context context, ProgressListener progressListener) throws Exception;
 	

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.adapter.MainAdapter;
@@ -429,5 +430,10 @@ public class MainFragment extends SelectRecyclerFragment<Integer> {
 	@Override
 	public boolean onContextItemSelected(MenuItem menuItem, UpdateView<Integer> updateView, Integer item) {
 		return false;
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Integer item) {
+
 	}
 }

@@ -383,7 +383,7 @@ public class OfflineMusicService implements MusicService {
 	}
 
     @Override
-    public List<Playlist> getPlaylists(boolean refresh, Context context, ProgressListener progressListener) throws Exception {
+    public List<Playlist> getPlaylists(boolean refresh, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
         List<Playlist> playlists = new ArrayList<Playlist>();
         File root = FileUtil.getPlaylistDirectory(context);
 		String lastServer = null;
@@ -466,7 +466,7 @@ public class OfflineMusicService implements MusicService {
     }
 
     @Override
-    public MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, ProgressListener progressListener) throws Exception {
+    public MusicDirectory getPlaylist(boolean refresh, String id, String name, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
 		DownloadService downloadService = DownloadService.getInstance();
         if (downloadService == null) {
             return new MusicDirectory();

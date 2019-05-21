@@ -21,13 +21,17 @@ package github.daneren2005.dsub.view;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.domain.MusicDirectory;
 import github.daneren2005.dsub.domain.Playlist;
+import github.daneren2005.dsub.util.FileUtil;
 import github.daneren2005.dsub.util.ImageLoader;
 import github.daneren2005.dsub.util.SyncUtil;
+import github.daneren2005.dsub.util.Util;
 
 /**
  * Used to display albums in a {@code ListView}.
@@ -42,26 +46,56 @@ public class PlaylistView extends UpdateView<Playlist> {
 
 	public PlaylistView(Context context, ImageLoader imageLoader, boolean largeCell) {
 		super(context);
-		LayoutInflater.from(context).inflate(largeCell ? R.layout.basic_cell_item : R.layout.basic_art_item, this, true);
+//		LayoutInflater.from(context).inflate(largeCell ? R.layout.basic_cell_item : R.layout.basic_art_item, this, true);
+//
+//		coverArtView = findViewById(R.id.item_art);
+//		titleView = (TextView) findViewById(R.id.item_name);
+//		moreButton = (ImageView) findViewById(R.id.item_more);
+//		starButton = (ImageButton) findViewById(R.id.album_star);
+//		starButton.setFocusable(false);
+//		this.imageLoader = imageLoader;
+
+		LayoutInflater.from(context).inflate(largeCell ? R.layout.playlist_cell_item : R.layout.basic_art_item, this, true);
 
 		coverArtView = findViewById(R.id.item_art);
 		titleView = (TextView) findViewById(R.id.item_name);
 		moreButton = (ImageView) findViewById(R.id.item_more);
-
+		downloadButton = (Switch) findViewById(R.id.download_switch);
 		this.imageLoader = imageLoader;
 	}
 
 	protected void setObjectImpl(Playlist playlist) {
 		titleView.setText(playlist.getName());
 		imageTask = imageLoader.loadImage(coverArtView, playlist, false, true);
+		if(SyncUtil.isSyncedPlaylist(context, playlist.getId())){
+			downloadButton.setChecked(true);
+		}else{
+			downloadButton.setChecked(false);
+		}
 	}
 
 	public void onUpdateImageView() {
 		imageTask = imageLoader.loadImage(coverArtView, item, false, 	true);
 	}
 
+
 	@Override
 	protected void updateBackground() {
+		if(isStarred) {
+			//SyncUtil.setSyncet(context, item);
+		}
+
 		pinned = SyncUtil.isSyncedPlaylist(context, item.getId());
+		isDownloaded = SyncUtil.isSyncedPlaylist(context, item.getId());
+
+
+	}
+	public void update() {
+
+		super.update();
+
+//		if(!Util.equals(item.get(), coverArtId)) {
+//			onUpdateImageView();
+//		}
 	}
 }

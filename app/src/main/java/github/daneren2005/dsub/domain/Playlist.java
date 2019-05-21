@@ -38,6 +38,8 @@ public class Playlist implements Serializable {
 	private String comment;
 	private String songCount;
 	private Boolean pub;
+	private Boolean isFavorite;
+
 	private Date created;
 	private Date changed;
 	private Integer duration;
@@ -61,6 +63,18 @@ public class Playlist implements Serializable {
 		setChanged(changed);
 		this.duration = duration;
     }
+	public Playlist(String id, String name, String owner, String comment, String songCount, String pub, String created, String changed, Integer duration, boolean isFavorite) {
+		this.id = id;
+		this.name = name;
+		this.owner = (owner == null) ? "" : owner;
+		this.comment = (comment == null) ? "" : comment;
+		this.songCount = (songCount == null) ? "" : songCount;
+		this.pub = (pub == null) ? null : (pub.equals("true"));
+		setCreated(created);
+		setChanged(changed);
+		this.isFavorite = isFavorite;
+		this.duration = duration;
+	}
 
 	public int getCloseness() {
 		return closeness;
@@ -180,6 +194,14 @@ public class Playlist implements Serializable {
 		
 		Playlist playlist = (Playlist) o;
 		return playlist.id.equals(this.id);
+	}
+
+	public Boolean getFavorite() {
+		return isFavorite;
+	}
+
+	public void setFavorite(Boolean favorite) {
+		isFavorite = favorite;
 	}
 
 	public static class PlaylistComparator implements Comparator<Playlist> {

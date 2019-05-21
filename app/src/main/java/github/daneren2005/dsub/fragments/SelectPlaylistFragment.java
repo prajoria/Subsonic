@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import github.daneren2005.dsub.R;
@@ -41,6 +42,7 @@ import java.util.List;
 
 public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 	private static final String TAG = SelectPlaylistFragment.class.getSimpleName();
+	private boolean favoriteOnly = false;
 
 	@Override
 	public void onCreate(Bundle bundle) {
@@ -146,7 +148,7 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 		}
 
 		if(shared.isEmpty()) {
-			return new PlaylistAdapter(context, playlists, getImageLoader(), largeAlbums, this);
+			return new PlaylistAdapter(context, playlists, getImageLoader(), largeAlbums, this, this);
 		} else {
 			Resources res = context.getResources();
 			List<String> headers = Arrays.asList(res.getString(R.string.playlist_mine), res.getString(R.string.playlist_shared));
@@ -155,13 +157,13 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 			sections.add(mine);
 			sections.add(shared);
 
-			return new PlaylistAdapter(context, headers, sections, getImageLoader(), largeAlbums, this);
+			return new PlaylistAdapter(context, headers, sections, getImageLoader(), largeAlbums, this, this);
 		}
 	}
 
 	@Override
 	public List<Playlist> getObjects(MusicService musicService, boolean refresh, ProgressListener listener) throws Exception {
-		List<Playlist> playlists = musicService.getPlaylists(refresh, context, listener);
+		List<Playlist> playlists = musicService.getPlaylists(refresh, context, favoriteOnly,listener);
 		if(!Util.isOffline(context) && refresh) {
 			new CacheCleaner(context, getDownloadService()).cleanPlaylists(playlists);
 		}
@@ -373,7 +375,7 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 			protected Void doInBackground() throws Throwable {
 				// Unpin all of the songs in playlist
 				MusicService musicService = MusicServiceFactory.getMusicService(context);
-				MusicDirectory root = musicService.getPlaylist(true, playlist.getId(), playlist.getName(), context, this);
+				MusicDirectory root = musicService.getPlaylist(true, playlist.getId(), playlist.getName(), context, false, this);
 				for(MusicDirectory.Entry entry: root.getChildren()) {
 					DownloadFile file = new DownloadFile(context, entry, false);
 					file.unpin();
@@ -387,5 +389,31 @@ public class SelectPlaylistFragment extends SelectRecyclerFragment<Playlist> {
 
 			}
 		}.execute();
+	}
+
+	@Override
+	public void onItemCheckedChanged(CompoundButton compoundButton, boolean b, Playlist item) {
+
+
+		if(item != null) {
+			if(b) {
+				syncPlaylist(item);
+			}else{
+				stopSyncPlaylist(item);
+			}
+		}
+		if(SyncUtil.isSyncedPlaylist(context, item.getId())){
+			compoundButton.setChecked(true);
+		}else{
+			compoundButton.setChecked(false);
+		}
+	}
+
+	public boolean isFavoriteOnly() {
+		return favoriteOnly;
+	}
+
+	public void setFavoriteOnly(boolean favoriteOnly) {
+		this.favoriteOnly = favoriteOnly;
 	}
 }

@@ -318,6 +318,9 @@ public class SubsonicActivity extends AppCompatActivity implements OnItemSelecte
 						case R.id.drawer_playlists:
 							drawerItemSelected("Playlist");
 							return true;
+						case R.id.drawer_fav_playlists:
+							drawerItemSelected("Favorite Playlist");
+							return true;
 						case R.id.drawer_podcasts:
 							drawerItemSelected("Podcast");
 							return true;

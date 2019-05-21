@@ -272,6 +272,9 @@ public class MusicDirectory implements Serializable {
 
 		public Entry(String id) {
 			this.id = id;
+			if(id == null){
+				id = "";
+			}
 		}
 		public Entry(Artist artist) {
 			this.id = artist.getId();
@@ -281,6 +284,9 @@ public class MusicDirectory implements Serializable {
 			this.starred = artist.isStarred();
 			this.rating = artist.getRating();
 			this.linkedArtist = artist;
+			if(id == null){
+				id = "";
+			}
 		}
 
 		public boolean isPlaylist() {

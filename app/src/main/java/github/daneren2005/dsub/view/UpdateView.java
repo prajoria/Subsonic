@@ -31,6 +31,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.Switch;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,7 @@ import github.daneren2005.dsub.domain.MusicDirectory;
 import github.daneren2005.dsub.R;
 import github.daneren2005.dsub.util.DrawableTint;
 import github.daneren2005.dsub.util.SilentBackgroundTask;
+import github.daneren2005.dsub.util.SyncUtil;
 
 public abstract class UpdateView<T> extends LinearLayout {
 	private static final String TAG = UpdateView.class.getSimpleName();
@@ -54,6 +56,8 @@ public abstract class UpdateView<T> extends LinearLayout {
 	protected T item;
 	protected RatingBar ratingBar;
 	protected ImageButton starButton;
+	protected Switch downloadButton;
+
 	protected ImageView moreButton;
 	protected View coverArtView;
 	
@@ -62,6 +66,8 @@ public abstract class UpdateView<T> extends LinearLayout {
 	protected boolean shaded = false;
 	protected boolean starred = false;
 	protected boolean isStarred = false;
+	protected boolean downloaded = false;
+	protected boolean isDownloaded = false;
 	protected int isRated = 0;
 	protected int rating = 0;
 	protected SilentBackgroundTask<Void> imageTask = null;
@@ -268,7 +274,21 @@ public abstract class UpdateView<T> extends LinearLayout {
 				}
 			}
 		}
+		if(downloadButton != null) {
+			downloadButton.setVisibility(View.VISIBLE);
 
+			if(isDownloaded) {
+				if(!downloaded) {
+					downloaded = true;
+					downloadButton.setChecked(downloaded);
+				}
+			} else {
+				if(starred) {
+					downloaded = false;
+					downloadButton.setChecked(downloaded);
+				}
+			}
+		}
 		if(ratingBar != null && isRated != rating) {
 			if(isRated > 0 && rating == 0) {
 				ratingBar.setVisibility(View.VISIBLE);
