@@ -47,7 +47,7 @@ public class SearchFragment extends SubsonicFragment implements SectionAdapter.O
 
 	private static final int MAX_ARTISTS = 20;
 	private static final int MAX_ALBUMS = 20;
-	private static final int MAX_PLAYLIST = 50;
+	private static final int MAX_PLAYLIST = 1000;
 
 	private static final int MAX_SONGS = 50;
 	private static final int MIN_CLOSENESS = 1;

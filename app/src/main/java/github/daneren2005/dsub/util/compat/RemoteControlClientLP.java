@@ -554,7 +554,7 @@ public class RemoteControlClientLP extends RemoteControlClientBase {
 					int artists = 10;
 					int albums = 10;
 					int songs = 10;
-					int playlist = 10;
+					int playlist = 1000;
 
 					// Play a specific artist
 					if (MediaStore.Audio.Artists.ENTRY_CONTENT_TYPE.equals(mediaFocus)) {
