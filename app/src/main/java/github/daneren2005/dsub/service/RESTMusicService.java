@@ -396,7 +396,17 @@ public class RESTMusicService implements MusicService {
         }
     }
 
-    @Override
+	@Override
+	public List<Playlist> getFavoritePlaylists(boolean refresh, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
+		Reader reader = getReader(context, progressListener, "getFavoritePlaylists");
+		try {
+			return new PlaylistsParser(context, getInstance(context)).parse(reader, progressListener);
+		} finally {
+			Util.close(reader);
+		}
+	}
+
+	@Override
     public List<Playlist> getPlaylists(boolean refresh, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
         Reader reader = getReader(context, progressListener, "getPlaylists");
         try {

@@ -56,7 +56,7 @@ public class PlaylistsParser extends AbstractParser {
 					String created = get("created");
 					String changed = get("changed");
 					Integer duration = getInteger("duration");
-					boolean isFav = getBoolean("isFavorite");
+					boolean isFav = getBoolean("Favorite");
                     result.add(new Playlist(id, name, owner, comment, songCount, pub, created, changed, duration, isFav));
                 } else if ("error".equals(tag)) {
                     handleError();

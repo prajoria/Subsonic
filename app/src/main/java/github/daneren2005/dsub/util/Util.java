@@ -316,7 +316,12 @@ public final class Util {
 
     public static int getCacheSizeMB(Context context) {
         SharedPreferences prefs = getPreferences(context);
-        int cacheSize = Integer.parseInt(prefs.getString(Constants.PREFERENCES_KEY_CACHE_SIZE, "-1"));
+        int cacheSize = -1;
+		String value = prefs.getString(Constants.PREFERENCES_KEY_CACHE_SIZE, "-1");
+		if(!value.isEmpty()) {
+			cacheSize = Integer.parseInt(value);
+		}
+
         return cacheSize == -1 ? Integer.MAX_VALUE : cacheSize;
     }
 	public static boolean isBatchMode(Context context) {

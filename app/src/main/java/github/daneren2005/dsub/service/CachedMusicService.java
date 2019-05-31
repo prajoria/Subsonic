@@ -375,8 +375,37 @@ public class CachedMusicService implements MusicService {
 		}
         return dir;
     }
+	@Override
+	public List<Playlist> getFavoritePlaylists(boolean refresh, Context context, boolean favoriteOnly, ProgressListener progressListener) throws Exception {
+		checkSettingsChanged(context);
+		List<Playlist> result = refresh ? null : cachedPlaylists.get();
+		if (result == null) {
+			if(!refresh) {
+				result = FileUtil.deserialize(context, getCacheName(context, "playlist"), ArrayList.class);
+			}
 
-    @Override
+			if(result == null) {
+				result = musicService.getPlaylists(refresh, context, favoriteOnly, progressListener);
+				FileUtil.serialize(context, new ArrayList<Playlist>(result), getCacheName(context, "playlist"));
+			}
+			if(favoriteOnly) {
+				List<Playlist> favresult = new ArrayList<Playlist>();
+				for (Playlist pls : result) {
+					if (pls.getFavorite()) {
+						favresult.add(pls);
+					}
+				}
+				result = favresult;
+			}
+
+			cachedPlaylists.set(result);
+
+
+		}
+		return result;
+	}
+
+	@Override
     public List<Playlist> getPlaylists(boolean refresh, Context context, boolean favoriteOnly, ProgressListener progressListener) throws Exception {
         checkSettingsChanged(context);
         List<Playlist> result = refresh ? null : cachedPlaylists.get();
@@ -386,8 +415,13 @@ public class CachedMusicService implements MusicService {
         	}
         	
         	if(result == null) {
-	        	result = musicService.getPlaylists(refresh, context, favoriteOnly, progressListener);
-	        	FileUtil.serialize(context, new ArrayList<Playlist>(result), getCacheName(context, "playlist"));
+				if(favoriteOnly) {
+					result = musicService.getFavoritePlaylists(refresh, context, favoriteOnly, progressListener);
+					FileUtil.serialize(context, new ArrayList<Playlist>(result), getCacheName(context, "playlist"));
+				}else {
+					result = musicService.getPlaylists(refresh, context, favoriteOnly, progressListener);
+					FileUtil.serialize(context, new ArrayList<Playlist>(result), getCacheName(context, "playlist"));
+				}
         	}
         	if(favoriteOnly) {
 				List<Playlist> favresult = new ArrayList<Playlist>();

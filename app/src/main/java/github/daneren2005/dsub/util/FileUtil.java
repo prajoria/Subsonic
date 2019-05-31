@@ -167,11 +167,12 @@ public class FileUtil {
 			fw.write("#EXTM3U\n");
 			for (MusicDirectory.Entry e : playlist.getChildren()) {
 				String filePath = FileUtil.getSongFile(context, e).getAbsolutePath();
-				if(! new File(filePath).exists()){
-					String ext = FileUtil.getExtension(filePath);
-					String base = FileUtil.getBaseName(filePath);
-					filePath = base + ".complete." + ext;
-				}
+				// No need to mess with playlist file. If a song in playlist not present let it still show ad it will be skipped
+//				if(! new File(filePath).exists()){
+//					String ext = FileUtil.getExtension(filePath);
+//					String base = FileUtil.getBaseName(filePath);
+//					filePath = base + ".complete." + ext;
+//				}
 				fw.write(filePath + "\n");
 			}
 		} catch(Exception e) {
@@ -189,11 +190,13 @@ public class FileUtil {
 			fw.write("#EXTM3U\n");
 			for (MusicDirectory.Entry e : playlist.getChildren()) {
 				String filePath = FileUtil.getSongFile(context, e).getAbsolutePath();
-				if(! new File(filePath).exists()){
-					String ext = FileUtil.getExtension(filePath);
-					String base = FileUtil.getBaseName(filePath);
-					filePath = base + ".complete." + ext;
-				}
+				// No need to mess with playlist file. If a song in playlist not present let it still show ad it will be skipped
+
+//				if(! new File(filePath).exists()){
+//					String ext = FileUtil.getExtension(filePath);
+//					String base = FileUtil.getBaseName(filePath);
+//					filePath = base + ".complete." + ext;
+//				}
 				fw.write(filePath + "\n");
 			}
 		} catch(Exception e) {

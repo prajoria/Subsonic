@@ -382,7 +382,90 @@ public class OfflineMusicService implements MusicService {
 		}
 	}
 
-    @Override
+	@Override
+	public List<Playlist> getFavoritePlaylists(boolean refresh, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
+		List<Playlist> playlists = new ArrayList<Playlist>();
+		File root = FileUtil.getPlaylistDirectory(context);
+		String lastServer = null;
+		boolean removeServer = true;
+		for (File folder : FileUtil.listFiles(root)) {
+			if(folder.isDirectory()) {
+				String server = folder.getName();
+				SortedSet<File> fileList = FileUtil.listFiles(folder);
+				for(File file: fileList) {
+					if(FileUtil.isPlaylistFile(file)) {
+						String id = file.getName();
+						String filename = FileUtil.getBaseName(id);
+						String name = server + ": " + filename;
+						Playlist playlist = new Playlist(server, name);
+						playlist.setComment(filename);
+
+						Reader reader = null;
+						BufferedReader buffer = null;
+						int songCount = 0;
+						try {
+							reader = new FileReader(file);
+							buffer = new BufferedReader(reader);
+
+							String line = buffer.readLine();
+							while( (line = buffer.readLine()) != null ){
+								// No matter what, end file can't have .complete in it
+								line = line.replace(".complete", "");
+								File entryFile = new File(line);
+
+								// Don't add file to playlist if it doesn't exist as cached or pinned!
+								File checkFile = entryFile;
+								if(!checkFile.exists()) {
+									// If normal file doens't exist, check if .complete version does
+									checkFile = new File(entryFile.getParent(), FileUtil.getBaseName(entryFile.getName())
+											+ ".complete." + FileUtil.getExtension(entryFile.getName()));
+								}
+
+								String entryName = getName(entryFile);
+								if(checkFile.exists() && entryName != null){
+									songCount++;
+								}
+							}
+
+							playlist.setSongCount(Integer.toString(songCount));
+						} catch(Exception e) {
+							Log.w(TAG, "Failed to count songs in playlist", e);
+						} finally {
+							Util.close(buffer);
+							Util.close(reader);
+						}
+
+						if(songCount > 0) {
+							playlists.add(playlist);
+						}
+					}
+				}
+
+				if(!server.equals(lastServer) && fileList.size() > 0) {
+					if(lastServer != null) {
+						removeServer = false;
+					}
+					lastServer = server;
+				}
+			} else {
+				// Delete legacy playlist files
+				try {
+					folder.delete();
+				} catch(Exception e) {
+					Log.w(TAG, "Failed to delete old playlist file: " + folder.getName());
+				}
+			}
+		}
+
+		if(removeServer) {
+			for(Playlist playlist: playlists) {
+				playlist.setName(playlist.getName().substring(playlist.getId().length() + 2));
+			}
+		}
+		return playlists;
+	}
+
+	@Override
     public List<Playlist> getPlaylists(boolean refresh, Context context, boolean favOnly, ProgressListener progressListener) throws Exception {
         List<Playlist> playlists = new ArrayList<Playlist>();
         File root = FileUtil.getPlaylistDirectory(context);
